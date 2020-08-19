@@ -8,16 +8,6 @@ function App()
 
   const [repositoryList, setRepositoryList] = useState([]);
 
-  async function updateRepoListRender()
-  {
-    await api.get('repositories')
-      .then(req =>
-      {
-        const repos = req.data;
-        setRepositoryList([...repos]);
-      });
-  }
-
   async function handleAddRepository()
   {
     const repoToAdd = {
@@ -35,23 +25,24 @@ function App()
 
   async function handleRemoveRepository(id)
   {
-    await api.delete(`repositories/${id}`)
-      .then(_ =>
-      {
-        repositoryList.map(repo =>
-        {
-          if (repo.id !== id) return;
-          const idIndex = repositoryList.indexOf(id);
-          const updateRepoList = repositoryList.splice(idIndex, 1);
-          setRepositoryList([...updateRepoList]);
-          updateRepoListRender();
-        });
-      });
-  }
+    await api.delete(`repositories/${id}`);
+
+    const copyRepos = [...repositoryList];
+
+    const indexOfID = () => copyRepos.map(repo => repo).indexOf(id);
+    copyRepos.splice(indexOfID(), 1);
+
+    setRepositoryList(copyRepos);
+  };
 
   useEffect(() =>
   {
-    updateRepoListRender();
+    api.get('repositories')
+      .then(req =>
+      {
+        const repos = req.data;
+        setRepositoryList([...repos]);
+      });
   }, []);
 
   return (
