@@ -10,7 +10,7 @@ function App()
 
   async function updateRepoListRender()
   {
-    api.get('repositories')
+    await api.get('repositories')
       .then(req =>
       {
         const repos = req.data;
